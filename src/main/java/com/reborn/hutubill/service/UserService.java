@@ -48,6 +48,9 @@ public class UserService extends HttpServlet {
                 resp.addCookie(cookie);
 //                resp.sendRedirect("localhost:8081/home");
                 resp.getWriter().write("["+user.toString()+"]");
+            } else {
+                //注册失败
+                resp.getWriter().write("{\"error\":\"1\"}");
             }
         }
     }
