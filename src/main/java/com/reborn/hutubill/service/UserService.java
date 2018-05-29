@@ -39,7 +39,7 @@ public class UserService extends HttpServlet {
                 user.setPassword(req.getParameter("password"));
                 user = userDao.add(user);
             }
-            
+
 //            user.setId(2);
             if (user.getId() > 0) {
                 //用户登录或者注册成功

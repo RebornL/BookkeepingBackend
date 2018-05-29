@@ -30,7 +30,7 @@ public class CategoryService extends HttpServlet {
         String url = req.getRequestURI();
         String action = url.substring(url.lastIndexOf("/")+1);
 
-        if ("getallcategory".equals(action)) {
+        if ("getAllCategory".equals(action)) {
             //获取所有用户的条目
             List<Category> categories = categoryDao.list(Integer.parseInt(req
                     .getParameter("uid")));
@@ -52,17 +52,13 @@ public class CategoryService extends HttpServlet {
             }
         }
     
-        if ("deletecategory".equals(action)) {
+        if ("delCategory".equals(action)) {
             int result = categoryDao.delete(Integer.parseInt(req.getParameter
                             ("id")), Integer.parseInt(req.getParameter("uid")));
             resp.getWriter().write("[{\"result\":\""+result+"\"}]");
         }
         
-        if ("getConsume".equals(action)) {
-            //获取用户本月的消费
-            int uid = Integer.parseInt(req.getParameter("uid"));
-            
-        }
+        
     }
     
     @Override
@@ -74,10 +70,13 @@ public class CategoryService extends HttpServlet {
         resp.setHeader("Access-Control-Allow-Origin", "*");
         /* 星号表示所有的异域请求都可以接受， */
         resp.setHeader("Access-Control-Allow-Methods", "GET,POST");
+        resp.setContentType("text/html;charset=UTF-8");
+        resp.setCharacterEncoding("utf-8");
+        resp.setContentType("application/json;charset=utf-8");
         
         String url = req.getRequestURI();
         String action = url.substring(url.lastIndexOf("/")+1);
-        if("addcategory".equals(action)) {
+        if("addCategory".equals(action)) {
             //新增新的条目
             Category category = new Category();
             category.setName(req.getParameter("name"));
@@ -85,11 +84,11 @@ public class CategoryService extends HttpServlet {
             
             category = categoryDao.add(category);
             if (category.getId() > 0) {
-                resp.setContentType("text/html;charset=UTF-8");
-                resp.setCharacterEncoding("utf-8");
-                resp.setContentType("application/json;charset=utf-8");
+                
                 //新增成功
                 resp.getWriter().write("["+category.toString()+"]");
+            } else {
+                resp.getWriter().write("{\"error\": \"1\"}");
             }
             
         }

@@ -174,7 +174,7 @@ public class RecordDao {
         List<Record> records = new ArrayList<>();
         //获取本月的消费记录，还得加上uid的限制，明确为不同的人
         String sql = "select * from record where date >= ? and date <= ? and " +
-                "uid = ?";
+                "uid = ? order by date";
     
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql)){
@@ -202,8 +202,11 @@ public class RecordDao {
     
     //这个方法用来计算截止至本月某日的消费金额
     public static int getMonthConsume(int uid) {
-        String sql = "select sum(spend) consume from record where uid = ? and" +
-                " date > ? and date < date < ?";
+        String sql = "select uid, sum(spend) as consume from record " +
+                "where " +
+                "uid = " +
+                "? and" +
+                " date > ? and date < ?";
         Date monthBegin = DateUtil.monthBegin();
         Date today = DateUtil.today();
         
@@ -218,7 +221,7 @@ public class RecordDao {
     
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                result = rs.getInt(1);
+                result = rs.getInt("consume");
             }
         } catch (SQLException e) {
             e.printStackTrace();

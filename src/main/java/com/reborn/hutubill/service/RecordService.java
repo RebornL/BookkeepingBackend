@@ -38,14 +38,14 @@ public class RecordService extends HttpServlet {
             //根据用户的uid获取用户本月的消费
             int monthConsume = recordDao.getMonthConsume(uid);
             if (monthConsume != 0) {
-                resp.getWriter().write("{\"monthConsume\": \"" + String.valueOf
-                        (monthConsume) + "\"}");
+                resp.getWriter().write("{\"uid\":\""+uid+"\", \"monthConsume\": " +
+                        "\""+monthConsume+"\"}");
             } else {
                 //当用户本月没有任何记录的时候返回error为1.
                 resp.getWriter().write("{\"error\": \"1\"}");
             }
         }
-        if ("getMonthConsume".equals(action)) {
+        if ("getMonthRecord".equals(action)) {
 //            System.out.println(req.getParameter("uid"));
             //获取一定时间内的记录
             List<Record> records = recordDao.list(DateUtil.monthBegin(),
@@ -66,6 +66,14 @@ public class RecordService extends HttpServlet {
             //返回本月的消费的所有记录
             resp.getWriter().write(strBuffer.toString());
         }
+    
+//        if ("getConsume".equals(action)) {
+//            //获取用户本月的总消费
+//            int uid = Integer.parseInt(req.getParameter("uid"));
+//            int result = recordDao.getMonthConsume(uid);
+//            resp.getWriter().write("{\"uid\":\""+uid+"\", \"monthConsume\": " +
+//                    "\""+result+"\"}");
+//        }
     }
     
     @Override

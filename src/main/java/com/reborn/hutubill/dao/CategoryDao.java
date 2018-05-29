@@ -48,18 +48,20 @@ public class CategoryDao {
         return category;
     }
     
-    public void update(Category category) {
+    public int update(Category category) {
         
         String sql = "update category set name = ? where id = ?";
+        int result = 0;
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql)) {
             ps.setString(1, category.getName());
             ps.setInt(2, category.getId());
             
-            ps.execute();
+            result = ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return result;
     }
     
     public int delete(int id, int uid) {

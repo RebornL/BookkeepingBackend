@@ -28,8 +28,14 @@ public class ConfigService extends HttpServlet {
             config.setUid(uid);
             config = configDao.get(uid);
             //保存用户的预算
-            resp.getWriter().write("["+config.toString()+"]");
+            if (config == null) {
+                resp.getWriter().write("{\"error\": \"1\"}");//代表该用户的config文件不存在
+            } else {
+                resp.getWriter().write("[" + config.toString() + "]");
+            }
         }
+    
+        
         
         
     }
