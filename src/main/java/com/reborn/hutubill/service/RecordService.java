@@ -60,9 +60,12 @@ public class RecordService extends HttpServlet {
                 strBuffer.append(", ");
             }
             System.out.println(strBuffer.lastIndexOf(","));
-            strBuffer.replace(strBuffer.lastIndexOf(","), strBuffer
-                    .lastIndexOf(",")+1, "]");
-            
+            if (strBuffer.length() == 1) {
+                strBuffer.append("]");
+            } else {
+                strBuffer.replace(strBuffer.lastIndexOf(","), strBuffer
+                        .lastIndexOf(",") + 1, "]");
+            }
             //返回本月的消费的所有记录
             resp.getWriter().write(strBuffer.toString());
         }

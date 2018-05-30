@@ -1,6 +1,6 @@
 package com.reborn.hutubill.dao;
 
-import com.mysql.cj.api.xdevapi.Result;
+
 import com.reborn.hutubill.entity.User;
 import com.reborn.hutubill.util.DBUtil;
 
@@ -9,7 +9,7 @@ import java.sql.*;
 public class UserDao {
     
     public User add(User user) {
-        String sql = "insert into user value (null, ?, ?)";
+        String sql = "insert into user(username, password) values(?, ?)";
         
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

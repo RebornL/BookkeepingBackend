@@ -28,15 +28,16 @@ public class UserService extends HttpServlet {
         //save已经被测试成，当用户已经存在进行登录的时候，会返回user的json的对应的数据格式
         if ("save".equals(uri.substring(uri.lastIndexOf("/")+1))) {
             //注册用户或者登录
-            User user = new User();
+            User user;
             String username = req.getParameter("username");
             String password = req.getParameter("password");
             //首先判断数据库中存在此用户
             user = userDao.getByUsername(username, password);
             if (user == null) {
                 //数据库中不存在该用户，因此进行注册操作
-                user.setUsername(req.getParameter("username"));
-                user.setPassword(req.getParameter("password"));
+                user = new User();
+                user.setUsername(username);
+                user.setPassword(password);
                 user = userDao.add(user);
             }
 

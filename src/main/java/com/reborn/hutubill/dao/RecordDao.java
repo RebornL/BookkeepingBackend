@@ -1,6 +1,6 @@
 package com.reborn.hutubill.dao;
 
-import com.mysql.cj.api.xdevapi.Result;
+
 import com.reborn.hutubill.entity.Category;
 import com.reborn.hutubill.entity.Record;
 import com.reborn.hutubill.util.DBUtil;
