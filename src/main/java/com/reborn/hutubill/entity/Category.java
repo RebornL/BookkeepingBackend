@@ -33,9 +33,9 @@ public class Category {
     @Override
     public String toString() {
         return "{" +
-                "\"id\"=\"" + id +
-                "\", \"name\"=\"" + name + '\"' +
-                ", \"uid\"=\"" + uid +
+                "\"id\":\"" + id +
+                "\", \"name\":\"" + name + '\"' +
+                ", \"uid\":\"" + uid +
                 "\"}";
     }
 }

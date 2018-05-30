@@ -20,6 +20,7 @@ public class RecordService extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        super.doGet(req, resp);
         //response设置
+        req.setCharacterEncoding("utf-8");
         /** 设置响应头允许跨域访问 **/
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setHeader("Access-Control-Allow-Methods", "GET,POST");
@@ -83,7 +84,8 @@ public class RecordService extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 //        super.doPost(req, resp);
-    
+        req.setCharacterEncoding("utf-8");
+
         RecordDao recordDao = new RecordDao();
         /** 设置响应头允许跨域访问 **/
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -113,7 +115,7 @@ public class RecordService extends HttpServlet {
                 resp.setCharacterEncoding("utf-8");
                 resp.setContentType("application/json;charset=utf-8");
                 //新增成功
-                resp.getWriter().write("["+record.toString()+"]");
+                resp.getWriter().write(record.toString());
             }
         
         }

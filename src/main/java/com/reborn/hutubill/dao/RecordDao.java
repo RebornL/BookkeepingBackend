@@ -36,7 +36,7 @@ public class RecordDao {
         String sql = "insert into config values(null, ?, ?, ?, ?, ?)";
         
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
-                .prepareStatement(sql);) {
+                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             ps.setInt(1, record.getSpend());
             ps.setInt(2, record.getCid());
             ps.setString(3, record.getComment());

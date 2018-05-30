@@ -14,6 +14,14 @@ public class ConfigService extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        super.doGet(req, resp);
+        req.setCharacterEncoding("utf-8");
+
+        /** 设置响应头允许跨域访问 **/
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "GET,POST");
+        resp.setContentType("text/html;charset=UTF-8");
+        resp.setCharacterEncoding("utf-8");
+        resp.setContentType("application/json;charset=utf-8");
         ConfigDao configDao = new ConfigDao();
         //获取访问config的操作
         String url = req.getRequestURI();
@@ -31,7 +39,7 @@ public class ConfigService extends HttpServlet {
             if (config == null) {
                 resp.getWriter().write("{\"error\": \"1\"}");//代表该用户的config文件不存在
             } else {
-                resp.getWriter().write("[" + config.toString() + "]");
+                resp.getWriter().write(config.toString());
             }
         }
     
@@ -44,6 +52,8 @@ public class ConfigService extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 //        super.doPost(req, resp);
+        req.setCharacterEncoding("utf-8");
+
         //设置response, 手动操作返回json数据格式
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setHeader("Access-Control-Allow-Methods", "GET,POST");
@@ -62,13 +72,18 @@ public class ConfigService extends HttpServlet {
             //{uid: xxx, buget: xxxx}
             Config config = new Config();
             int uid = Integer.parseInt(req.getParameter("uid"));//获取用户的id编号
-            String buget = req.getParameter("buget");//获取用户设置的预算
+            String buget = req.getParameter("value");//获取用户设置的预算
+            String key = req.getParameter("key");
             config.setUid(uid);
-            config.setKey("buget");
+            config.setKey(key);
             config.setValue(buget);
             //保存用户当前设置的预算
             config = configDao.add(config);
-            resp.getWriter().write("["+config.toString()+"]");
+            if (config.getId()>0){
+                resp.getWriter().write(config.toString());
+            } else {
+                resp.getWriter().write("{\"error\": \"1\"}");
+            }
         }
     }
 }

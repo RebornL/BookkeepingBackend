@@ -14,12 +14,9 @@ public class DBUtil {
     static {
         try {
             //加载mysql驱动
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
             e.printStackTrace();
         }
     }
@@ -33,14 +30,16 @@ public class DBUtil {
         try {
             Connection c = DBUtil.getConnection();
             Statement s = c.createStatement();
-            String sql = "insert into user(username, password) values('test1', 'test12345')";
-//            String sql = "select * from user;";
-//            ResultSet result = s.executeQuery(sql);
-            int result = s.executeUpdate(sql);
+//            String sql = "insert into user(username, password) values('test1', 'test12345')";
+            String sql = "select * from category;";
+            ResultSet result = s.executeQuery(sql);
+//            int result = s.executeUpdate(sql);
             System.out.println(result);
-//            while (result.next()) {
-//                System.out.println(result.getInt(1));
-//            }
+            while (result.next()) {
+                System.out.println(result.getInt(1));
+                System.out.println(result.getString("name"));
+                System.out.println(result.getInt("uid"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

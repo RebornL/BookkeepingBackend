@@ -30,14 +30,16 @@ public class CategoryDao {
     
     //新增新的条目
     public Category add(Category category) {
-        String sql = "insert into config values(null, ?)";
+        String sql = "insert into category(id, name, uid) values(null, ?, ?)";
         
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
-                .prepareStatement(sql);) {
+                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             ps.setString(1, category.getName());
+            ps.setInt(2, category.getUid());
             ps.execute();
-            
+
             ResultSet rs = ps.getGeneratedKeys();
+//            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 int id = rs.getInt(1);
                 category.setId(id);
@@ -104,7 +106,7 @@ public class CategoryDao {
     public List<Category> list(int start, int count, int uid) {
         List<Category> categories = new ArrayList<>();
         
-        String sql = "select * from category where uid = ？ order by id desc " +
+        String sql = "select * from category where uid = ? order by id desc " +
                 "limit ?, ?";
         
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
