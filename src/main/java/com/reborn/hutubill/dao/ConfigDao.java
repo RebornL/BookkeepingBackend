@@ -49,19 +49,20 @@ public class ConfigDao {
         return config;
     }
     
-    public void update(Config config) {
+    public int update(Config config) {
         
-        String sql = "update config set key = ?, value = ? where id = ?";
+        String sql = "update config set key_ = ?, value = ? where id = ?";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql)) {
             ps.setString(1, config.getKey());
             ps.setString(2, config.getValue());
             ps.setInt(3, config.getId());
             
-            ps.execute();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
     
     public void delete(int id) {
@@ -93,6 +94,31 @@ public class ConfigDao {
             e.printStackTrace();
         }
         
+        return config;
+    }
+
+    public Config getByKey(int uid, String key) {
+        Config config = new Config();
+
+        String sql = "select * from config where uid = ? and key_ = ?";
+
+        try(Connection c = DBUtil.getConnection(); PreparedStatement ps = c
+                .prepareStatement(sql);) {
+
+            ps.setInt(1, uid);
+            ps.setString(2, key);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                config.setKey(rs.getString("key_"));
+                config.setValue(rs.getString("value"));
+                config.setId(rs.getInt(1));
+                config.setUid(uid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return config;
     }
     

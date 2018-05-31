@@ -70,16 +70,36 @@ public class ConfigService extends HttpServlet {
             //若用户发送保存预算的操作
             // 获取发送的参数
             //{uid: xxx, buget: xxxx}
+            boolean flag = false;//更新或新增是否成功
             Config config = new Config();
             int uid = Integer.parseInt(req.getParameter("uid"));//获取用户的id编号
             String buget = req.getParameter("value");//获取用户设置的预算
             String key = req.getParameter("key");
-            config.setUid(uid);
-            config.setKey(key);
-            config.setValue(buget);
-            //保存用户当前设置的预算
-            config = configDao.add(config);
-            if (config.getId()>0){
+
+            //判断数据库中用户是否已经存在预算设置了
+            config = configDao.getByKey(uid, key);
+            if (config.getId() > 0) {
+                config.setValue(buget);
+                //更新数据库
+                int result = configDao.update(config);
+                if(result > 0) {
+                    flag = true;
+                    System.out.println("this config exist and update successfully");
+                }
+            } else {
+                //数据库不存在该用户的配置
+                config.setUid(uid);
+                config.setKey(key);
+                config.setValue(buget);
+                //保存用户当前设置的预算
+                config = configDao.add(config);
+                if (config.getId()>0) {
+                    flag = true;
+                    System.out.println("this config not exist and add successfully");
+                }
+            }
+
+            if (flag){
                 resp.getWriter().write(config.toString());
             } else {
                 resp.getWriter().write("{\"error\": \"1\"}");

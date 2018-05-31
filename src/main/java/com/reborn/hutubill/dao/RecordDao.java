@@ -33,14 +33,14 @@ public class RecordDao {
     }
     
     public Record add(Record record) {
-        String sql = "insert into config values(null, ?, ?, ?, ?, ?)";
+        String sql = "insert into record(spend, cid, comment, date, uid) values(?, ?, ?, ?, ?)";
         
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             ps.setInt(1, record.getSpend());
             ps.setInt(2, record.getCid());
             ps.setString(3, record.getComment());
-            ps.setDate(4, DateUtil.util2Sql(new Date()));
+            ps.setDate(4, DateUtil.util2Sql(record.getDate()));
             ps.setInt(5, record.getUid());
             ps.execute();
             
@@ -58,7 +58,7 @@ public class RecordDao {
     
     public void update(Record record) {
         
-        String sql = "update category set spend = ?, cid = ?, comment = " +
+        String sql = "update record set spend = ?, cid = ?, comment = " +
                 "?, date = ? where id = ?";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql)) {
@@ -219,6 +219,32 @@ public class RecordDao {
             ps.setDate(2, DateUtil.util2Sql(monthBegin));
             ps.setDate(3, DateUtil.util2Sql(today));
     
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("consume");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static int getTodayConsume(int uid) {
+        String sql = "select uid, sum(spend) as consume from record " +
+                "where " +
+                "uid = " +
+                "? and" +
+                " date = ?";
+        Date today = DateUtil.today();
+
+        int result = 0;
+
+        try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
+                .prepareStatement(sql);) {
+
+            ps.setInt(1, uid);
+            ps.setDate(2, DateUtil.util2Sql(today));
+
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 result = rs.getInt("consume");

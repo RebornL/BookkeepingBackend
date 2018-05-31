@@ -36,11 +36,11 @@ public class UserService extends HttpServlet {
             //首先判断数据库中存在此用户
             user = userDao.getByUsername(username, password);
             if (user != null) {
-                System.out.println("该用户存在 "+user.toString());
+                System.out.println("user exist "+user.toString());
             }
             if (user == null) {
                 //数据库中不存在该用户，因此进行注册操作
-                System.out.println("该用户不存在");
+                System.out.println("user not exist");
                 user = new User();
                 user.setUsername(username);
                 user.setPassword(password);
