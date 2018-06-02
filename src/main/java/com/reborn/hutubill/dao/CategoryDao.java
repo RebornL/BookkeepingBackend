@@ -67,11 +67,12 @@ public class CategoryDao {
     }
     
     public int delete(int id, int uid) {
-        try (Connection c = DBUtil.getConnection(); Statement s = c
-                .createStatement();) {
-            String sql = "delete from category where id = " + id+ "and uid ="
-                    + uid;
-            return s.executeUpdate(sql);
+        String sql = "delete from category where id = ? and uid = ?";
+        try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
+                .prepareStatement(sql);) {
+            ps.setInt(1, id);
+            ps.setInt(2, uid);
+            return ps.executeUpdate();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,14 +81,14 @@ public class CategoryDao {
     }
     
     public Category get(int id) {
-        Category category = null;
+        Category category = new Category();
+        String sql = "select * from category where id = ?";
+        try(Connection c = DBUtil.getConnection(); PreparedStatement ps = c
+                .prepareStatement(sql);) {
         
-        try(Connection c = DBUtil.getConnection(); Statement s = c
-                .createStatement();) {
-        
-            String sql = "select * from category where id = "+id;
+            ps.setInt(1, id);
             
-            ResultSet rs = s.executeQuery(sql);
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 category.setName(rs.getString("name"));
                 category.setId(id);
