@@ -20,6 +20,7 @@ public class RecordService extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 //        super.doGet(req, resp);
         //response设置
+        req.setCharacterEncoding("utf-8");
         /** 设置响应头允许跨域访问 **/
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setHeader("Access-Control-Allow-Methods", "GET,POST");
@@ -37,13 +38,27 @@ public class RecordService extends HttpServlet {
             int uid = Integer.parseInt(req.getParameter("uid"));
             //根据用户的uid获取用户本月的消费
             int monthConsume = recordDao.getMonthConsume(uid);
+            int todayConsume = recordDao.getTodayConsume(uid);
             if (monthConsume != 0) {
                 resp.getWriter().write("{\"uid\":\""+uid+"\", \"monthConsume\": " +
-                        "\""+monthConsume+"\"}");
+                        "\""+monthConsume+"\", \"todayConsume\":\""+todayConsume+"\"}");
             } else {
                 //当用户本月没有任何记录的时候返回error为1.
                 resp.getWriter().write("{\"error\": \"1\"}");
             }
+        }
+        //获取本日的消费
+        if ("getTodayConsume".equals(action)) {
+            int uid = Integer.parseInt(req.getParameter("uid"));
+            //根据用户的uid获取用户本月的消费
+            int todayConsume = recordDao.getTodayConsume(uid);
+//            if (todayConsume != 0) {
+                resp.getWriter().write("{\"uid\":\""+uid+"\", \"todayConsume\": " +
+                        "\""+todayConsume+"\"}");
+//            } else {
+//                //当用户本月没有任何记录的时候返回error为1.
+//                resp.getWriter().write("{\"error\": \"1\"}");
+//            }
         }
         if ("getMonthRecord".equals(action)) {
 //            System.out.println(req.getParameter("uid"));
@@ -60,9 +75,12 @@ public class RecordService extends HttpServlet {
                 strBuffer.append(", ");
             }
             System.out.println(strBuffer.lastIndexOf(","));
-            strBuffer.replace(strBuffer.lastIndexOf(","), strBuffer
-                    .lastIndexOf(",")+1, "]");
-            
+            if (strBuffer.length() == 1) {
+                strBuffer.append("]");
+            } else {
+                strBuffer.replace(strBuffer.lastIndexOf(","), strBuffer
+                        .lastIndexOf(",") + 1, "]");
+            }
             //返回本月的消费的所有记录
             resp.getWriter().write(strBuffer.toString());
         }
@@ -80,7 +98,8 @@ public class RecordService extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 //        super.doPost(req, resp);
-    
+        req.setCharacterEncoding("utf-8");
+
         RecordDao recordDao = new RecordDao();
         /** 设置响应头允许跨域访问 **/
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -89,28 +108,34 @@ public class RecordService extends HttpServlet {
     
         String url = req.getRequestURI();
         String action = url.substring(url.lastIndexOf("/")+1);
-        if("addrecord".equals(action)) {
+        if("addRecord".equals(action)) {
             //新增新的条目
             Record record = new Record();
             record.setSpend(Integer.parseInt(req.getParameter("spend")));
             record.setCid(Integer.parseInt(req.getParameter("cid")));
             record.setComment(req.getParameter("comment"));
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+            record.setUid(Integer.parseInt(req.getParameter("uid")));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
+                System.out.println(simpleDateFormat.parse(req.getParameter
+                        ("date")));
                 record.setDate(simpleDateFormat.parse(req.getParameter
                         ("date")));
+                System.out.println(DateUtil.util2Sql(record.getDate()));
             } catch (ParseException e) {
                 e.printStackTrace();
+                resp.getWriter().write("{\"error\": \"1\"}");
             }
-            
-    
+
             record = recordDao.add(record);
             if (record.getId() > 0) {
                 resp.setContentType("text/html;charset=UTF-8");
                 resp.setCharacterEncoding("utf-8");
                 resp.setContentType("application/json;charset=utf-8");
                 //新增成功
-                resp.getWriter().write("["+record.toString()+"]");
+                resp.getWriter().write(record.toString());
+            } else {
+                resp.getWriter().write("{\"error\": \"1\"}");
             }
         
         }

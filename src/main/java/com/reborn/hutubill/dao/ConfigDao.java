@@ -9,30 +9,30 @@ import java.util.List;
 
 public class ConfigDao {
     
-    public int getTotal() {
-        int total = 0;
-        try (Connection c = DBUtil.getConnection(); Statement s = c
-                .createStatement();) {
-            String sql = "select count(*) from config";
-            ResultSet rs = s.executeQuery(sql);
-            while (rs.next()) {
-                //JDBC读取SQL语句返回结果
-                total = rs.getInt(1);
-            }
-    
-            System.out.println("total of config: " + total);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return total;
-    }
+//    public int getTotal() {
+//        int total = 0;
+//        try (Connection c = DBUtil.getConnection(); Statement s = c
+//                .createStatement();) {
+//            String sql = "select count(*) from config";
+//            ResultSet rs = s.executeQuery(sql);
+//            while (rs.next()) {
+//                //JDBC读取SQL语句返回结果
+//                total = rs.getInt(1);
+//            }
+//
+//            System.out.println("total of config: " + total);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return total;
+//    }
     
     public Config add(Config config) {
         String sql = "insert into config values(null, ?, ?, ?)";
         
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
-                .prepareStatement(sql);) {
+                .prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
             ps.setString(1, config.getKey());
             ps.setString(2, config.getValue());
             ps.setInt(3, config.getUid());
@@ -49,19 +49,20 @@ public class ConfigDao {
         return config;
     }
     
-    public void update(Config config) {
+    public int update(Config config) {
         
-        String sql = "update config set key = ?, value = ? where id = ?";
+        String sql = "update config set key_ = ?, value = ? where id = ?";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
                 .prepareStatement(sql)) {
             ps.setString(1, config.getKey());
             ps.setString(2, config.getValue());
             ps.setInt(3, config.getId());
             
-            ps.execute();
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return 0;
     }
     
     public void delete(int id) {
@@ -74,24 +75,50 @@ public class ConfigDao {
         }
     }
     
-    public Config get(int id) {
-        Config config = null;
+    public Config get(int uid) {
+        Config config = new Config();
         
         try(Connection c = DBUtil.getConnection(); Statement s = c
                 .createStatement();) {
         
-            String sql = "select * from config where id = "+id;
+            String sql = "select * from config where uid = "+uid;
             
             ResultSet rs = s.executeQuery(sql);
             if (rs.next()) {
                 config.setKey(rs.getString("key_"));
                 config.setValue(rs.getString("value"));
-                config.setId(id);
+                config.setId(rs.getInt(1));
+                config.setUid(uid);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
+        return config;
+    }
+
+    public Config getByKey(int uid, String key) {
+        Config config = new Config();
+
+        String sql = "select * from config where uid = ? and key_ = ?";
+
+        try(Connection c = DBUtil.getConnection(); PreparedStatement ps = c
+                .prepareStatement(sql);) {
+
+            ps.setInt(1, uid);
+            ps.setString(2, key);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                config.setKey(rs.getString("key_"));
+                config.setValue(rs.getString("value"));
+                config.setId(rs.getInt(1));
+                config.setUid(uid);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return config;
     }
     

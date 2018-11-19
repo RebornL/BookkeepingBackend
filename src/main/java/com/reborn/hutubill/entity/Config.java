@@ -42,10 +42,10 @@ public class Config {
     @Override
     public String toString() {
         return "{" +
-                "\"id\"=\"" + id +
-                "\", \"key\"=\"" + key + '\"' +
-                ", \"value\"=\"" + value + '\"' +
-                ", \"uid\"=\"" + uid +
+                "\"id\":\"" + id +
+                "\", \"key\":\"" + key + '\"' +
+                ", \"value\":\"" + value + '\"' +
+                ", \"uid\":\"" + uid +
                 "\"}";
     }
 }

@@ -254,4 +254,34 @@ public class RecordDao {
         }
         return result;
     }
+<<<<<<< HEAD
 }
+=======
+
+    public static int getTodayConsume(int uid) {
+        String sql = "select uid, sum(spend) as consume from record " +
+                "where " +
+                "uid = " +
+                "? and" +
+                " date = ?";
+        Date today = DateUtil.today();
+
+        int result = 0;
+
+        try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c
+                .prepareStatement(sql);) {
+
+            ps.setInt(1, uid);
+            ps.setDate(2, DateUtil.util2Sql(today));
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("consume");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+}
+>>>>>>> 753fdc289bf88bc37f4e244353c34ba58484fbbc

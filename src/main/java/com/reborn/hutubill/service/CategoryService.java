@@ -17,6 +17,7 @@ public class CategoryService extends HttpServlet {
 //        super.doGet(req, resp);
 //        System.out.println(req.getRequestURI());
 //        resp.getWriter().write("Category");
+        req.setCharacterEncoding("utf-8");
         CategoryDao categoryDao = new CategoryDao();
         /** 设置响应头允许跨域访问 **/
         resp.setHeader("Access-Control-Allow-Origin", "*");
@@ -55,7 +56,7 @@ public class CategoryService extends HttpServlet {
         if ("delCategory".equals(action)) {
             int result = categoryDao.delete(Integer.parseInt(req.getParameter
                             ("id")), Integer.parseInt(req.getParameter("uid")));
-            resp.getWriter().write("[{\"result\":\""+result+"\"}]");
+            resp.getWriter().write("{\"result\":\""+result+"\"}");
         }
         
         
@@ -66,6 +67,7 @@ public class CategoryService extends HttpServlet {
             throws ServletException, IOException {
 //        super.doPost(req, resp);
         CategoryDao categoryDao = new CategoryDao();
+        req.setCharacterEncoding("utf-8");
         /** 设置响应头允许跨域访问 **/
         resp.setHeader("Access-Control-Allow-Origin", "*");
         /* 星号表示所有的异域请求都可以接受， */
@@ -79,6 +81,8 @@ public class CategoryService extends HttpServlet {
         if("addCategory".equals(action)) {
             //新增新的条目
             Category category = new Category();
+            System.out.println(req.getParameter("name"));
+//            System.out.println((req.getParameter("name")).decode("utf-8"));
             category.setName(req.getParameter("name"));
             category.setUid(Integer.parseInt(req.getParameter("uid")));
             
@@ -86,7 +90,7 @@ public class CategoryService extends HttpServlet {
             if (category.getId() > 0) {
                 
                 //新增成功
-                resp.getWriter().write("["+category.toString()+"]");
+                resp.getWriter().write(category.toString());//格式如下{id: xxx, name: xxx, uid: xxx}的json格式
             } else {
                 resp.getWriter().write("{\"error\": \"1\"}");
             }
